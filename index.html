@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials Fadrell - Emprendimiento Digital</title>
+    <!-- Google Fonts para tipografía premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Hojas de Estilo -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Iconos FontAwesome para complementar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Cabecera -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="company-branding">
+                <h1 id="company-name" class="company-title">Materials Fadrell</h1>
+                <p class="company-tagline">Soluciones de calidad para la construcción</p>
+            </div>
+            <div class="logo-container">
+                <img id="company-logo" src="assets/logo.png" alt="Materials Fadrell Logo" class="logo-img">
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de Navegación -->
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li><button class="nav-btn active" data-section="home">HOME</button></li>
+            <li><button class="nav-btn" data-section="empresa">EMPRESA</button></li>
+            <li><button class="nav-btn" data-section="productos">PRODUCTOS</button></li>
+            <li><button class="nav-btn" data-section="oferta">OFERTA DEL MES</button></li>
+            <li><button class="nav-btn" data-section="localizacion">LOCALIZACIÓN</button></li>
+            <li><button class="nav-btn" data-section="contacto">CONTACTO</button></li>
+            <li><button class="nav-btn" data-section="noticias">NOTICIAS</button></li>
+        </ul>
+    </nav>
+
+    <!-- Cuerpo Dinámico -->
+    <main class="main-content">
+        <!-- Contenedor de la Imagen Grande (Hero) -->
+        <section class="hero-section" id="hero-bg">
+            <div class="hero-overlay">
+                <div class="hero-text-content" id="dynamic-body-text">
+                    <!-- Contenido dinámico cargado por jQuery -->
+                    <h2 class="section-title animate-text">Bienvenido a Materials Fadrell</h2>
+                    <p class="section-slogan animate-text">"Construyendo tus sueños desde los cimientos."</p>
+                    <p class="section-desc animate-text">Ofrecemos los mejores materiales de construcción del país, garantizando durabilidad, resistencia e innovación para tus proyectos arquitectónicos e industriales.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-info">
+                <p>&copy; 2026 Materials Fadrell. Todos los derechos reservados. | Diseñado por Zhofri Joel Guamán Quichimbo</p>
+                <p class="footer-subinfo">Asignatura: Programación de Middleware y Seguridad de la Base de Datos 2-SIN-5A | UIDE Loja</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Script Principal -->
+    <script src="app.js"></script>
+</body>
+</html>

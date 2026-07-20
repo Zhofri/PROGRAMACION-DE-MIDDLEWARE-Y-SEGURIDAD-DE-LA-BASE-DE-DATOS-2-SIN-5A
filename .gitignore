@@ -1,0 +1,15 @@
+# Excluir archivos del reporte académico (Generación de PDF)
+reporte.html
+generate_pdf.py
+*.pdf
+assets/screenshot_home.png
+assets/screenshot_productos.png
+
+# IDEs y otros archivos de configuración
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+task.md
+implementation_plan.md
+walkthrough.md
