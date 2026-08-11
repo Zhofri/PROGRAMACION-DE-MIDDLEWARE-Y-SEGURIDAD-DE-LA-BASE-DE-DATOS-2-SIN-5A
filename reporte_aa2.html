@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte Proyecto - Aprendizaje Autónomo 2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap');
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 2; /* Doble espaciado APA */
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            color: black;
+        }
+        
+        .page {
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 2.54cm; /* Márgenes APA 7ma */
+            margin: 1cm auto;
+            background: white;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .cover-page {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cover-page img {
+            width: 150px;
+            margin-bottom: 2cm;
+        }
+
+        .cover-page h1, .cover-page h2, .cover-page h3, .cover-page p {
+            margin: 0.5cm 0;
+            font-weight: bold;
+        }
+
+        h1, h2, h3 {
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        h1 { font-size: 12pt; }
+        h2 { font-size: 12pt; font-style: italic; }
+        
+        p {
+            text-align: left;
+            text-indent: 1.27cm; /* Sangría primera línea APA */
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .no-indent {
+            text-indent: 0;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 1cm 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+
+        .image-caption {
+            font-style: italic;
+            font-size: 10pt;
+            text-align: left;
+            text-indent: 0;
+            margin-top: 5px;
+        }
+
+        .references {
+            text-indent: -1.27cm;
+            padding-left: 1.27cm;
+        }
+
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-indent: 0;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+
+        /* Ocultar box-shadow al imprimir para PDF */
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; padding: 2.54cm; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PORTADA -->
+    <div class="page cover-page">
+        <!-- Reutilizamos el logo de la UIDE que teníamos en el anterior o ponemos un texto si no está -->
+        <h1>Universidad Internacional del Ecuador</h1>
+        <h2>Facultad de Sistemas de la Información</h2>
+        
+        <br><br><br>
+        
+        <h3>Aprendizaje Autónomo 2:<br>Integración de Base de Datos y Consumo de API REST</h3>
+        
+        <br><br><br>
+        
+        <p class="no-indent"><strong>Estudiante:</strong> Zhofri Joel Guamán Quichimbo</p>
+        <p class="no-indent"><strong>Asignatura:</strong> Programación de Middleware y Seguridad de la Base de Datos 2-SIN-5A</p>
+        <p class="no-indent"><strong>Docente:</strong> Ing. Héctor Guillermo Avalos Silva</p>
+        
+        <br><br><br>
+        
+        <p class="no-indent">Loja, Ecuador</p>
+        <p class="no-indent">2026</p>
+    </div>
+
+    <!-- CUERPO DEL INFORME -->
+    <div class="page page-break">
+        <h1 style="text-align: center;">Desarrollo e Implementación del Aprendizaje Autónomo 2</h1>
+        
+        <h2>1. Introducción</h2>
+        <p>El presente informe detalla el proceso de desarrollo del "Aprendizaje Autónomo 2", el cual da continuidad al portal web del emprendimiento "Materials Fadrell". En esta segunda fase, el objetivo principal fue pasar de una página web estática a una aplicación dinámica, integrando un backend en Python (Flask) para procesar el formulario de contacto, almacenando la información en una base de datos MariaDB, enviando confirmaciones por correo electrónico y consumiendo una API externa (OpenWeatherMap) para proveer datos meteorológicos en tiempo real.</p>
+        
+        <h2>2. Paso 1: Tabla de Contacto E/R y Backend Python</h2>
+        <p>Para cumplir con los requerimientos del formulario de contacto, se diseñó primero la estructura en la base de datos `materials_fadrell`. Se creó la tabla `contacto` con los campos necesarios (nombre, email, mensaje y fecha de registro).</p>
+        
+        <div class="code-block">
+CREATE TABLE IF NOT EXISTS contacto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+        </div>
+        
+        <p>Para el procesamiento de los datos ingresados en el portal web (Frontend), se desarrolló una API utilizando el micro-framework Flask de Python. Este servidor se encarga de recibir las peticiones POST enviadas por JavaScript (mediante la función `fetch`). En el bloque de código de Flask, se utilizó la librería `pymysql` para insertar los datos en MariaDB. Se aplicó el manejo de excepciones con bloques `try/except` para garantizar que la aplicación no falle abruptamente si ocurre un error de conexión, tal como se revisó en clases.</p>
+        
+        <p>Una vez que los datos se guardan exitosamente en la base de datos, el script en Python invoca la librería `smtplib` para enviar un correo electrónico automático de "acuse de recibo" al cliente, garantizando una excelente experiencia de usuario.</p>
+        
+        <p>Adicionalmente, se construyó un script independiente llamado `subir_ftp.py` utilizando el módulo nativo `ftplib`. Este programa automatiza el proceso de empaquetar los códigos fuente en un archivo `.zip` y subirlo a un servidor FTP, agilizando el proceso de despliegue de la aplicación.</p>
+
+    </div>
+
+    <div class="page page-break">
+        <h2>3. Paso 2: Reporteador de Clima (API REST)</h2>
+        <p>Para el desarrollo de la sección meteorológica, se requería consumir datos en tiempo real. Esto es especialmente útil para un emprendimiento de materiales de construcción, ya que los contratistas pueden revisar el clima antes de planificar fundiciones de losas o despachos.</p>
+        
+        <p>Se creó una cuenta en OpenWeatherMap y se generó una API Key personal. En la interfaz gráfica (HTML), se agregó la pestaña "CLIMA" a la barra de navegación principal. En el archivo `app.js`, se implementó la función `setupWeatherAPI()`, la cual realiza una petición HTTP GET al endpoint de OpenWeatherMap solicitando los datos de la ciudad de Loja, Ecuador, en unidades métricas.</p>
+        
+        <div class="code-block">
+function setupWeatherAPI() {
+    const apiKey = 'eada7b6266bdf41847a33bd22948d455';
+    const city = 'Loja,EC';
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=es`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Se actualiza el DOM con jQuery
+            $('#clima-temp').text(Math.round(data.main.temp) + '°C');
+            $('#clima-humedad').text(data.main.humidity + '%');
+            $('#clima-desc').text(data.weather[0].description);
+            $('#clima-viento').text(data.wind.speed + ' m/s');
+        })
+        .catch(error => console.error(error));
+}
+        </div>
+
+        <p>Los datos recibidos en formato JSON (Temperatura, Humedad, Descripción y Velocidad del Viento) son procesados por JavaScript e inyectados dinámicamente en el DOM utilizando jQuery. Además, se incluyó la obtención del ícono dinámico provisto por la misma API para mejorar la presentación visual.</p>
+
+    </div>
+
+    <div class="page page-break">
+        <h2>4. Conclusiones</h2>
+        <p>El desarrollo de esta segunda fase del proyecto demuestra la importancia de integrar múltiples tecnologías (Frontend, Backend, Bases de Datos y APIs de terceros) para construir aplicaciones web funcionales y robustas. El uso de Flask junto con `pymysql` permitió establecer una comunicación eficiente y segura con la base de datos MariaDB, aislando la lógica de negocio y las credenciales del lado del cliente. Por otro lado, la incorporación de notificaciones por correo (`smtplib`) y el consumo de APIs externas (OpenWeatherMap) elevan el nivel del proyecto, ofreciendo funcionalidades modernas que aportan un valor real al usuario final.</p>
+        <p>Finalmente, el uso de herramientas como Git (GitLab) y FTP automatizado asegura un control de versiones adecuado y facilita el despliegue de los entregables, cumpliendo con los estándares de desarrollo enseñados en la asignatura.</p>
+
+        <h2>5. Referencias</h2>
+        
+        <p class="no-indent references">
+            Grinberg, M. (2018). <em>Flask Web Development: Developing Web Applications with Python</em> (2da ed.). O'Reilly Media.
+        </p>
+        <p class="no-indent references">
+            OpenWeather Ltd. (2026). <em>Current weather data API documentation</em>. OpenWeatherMap. https://openweathermap.org/current
+        </p>
+        <p class="no-indent references">
+            Python Software Foundation. (2026). <em>ftplib — FTP protocol client</em>. Documentación de Python 3.12. https://docs.python.org/3/library/ftplib.html
+        </p>
+    </div>
+
+</body>
+</html>

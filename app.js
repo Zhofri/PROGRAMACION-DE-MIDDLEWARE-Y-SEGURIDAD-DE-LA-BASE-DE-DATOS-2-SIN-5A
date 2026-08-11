@@ -212,6 +212,46 @@ $(document).ready(function() {
                     </div>
                 </div>
             `
+        },
+        clima: {
+            title: "Clima Actual en Loja",
+            slogan: '"Planifica tus fundiciones y despachos con el clima adecuado."',
+            desc: "Consulta las condiciones meteorológicas en tiempo real gracias a la integración con la API de OpenWeatherMap.",
+            html: `
+                <div class="clima-container" style="background: rgba(255, 255, 255, 0.95); border-radius: 12px; padding: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; color: #333;">
+                    <div id="clima-loading">
+                        <i class="fa-solid fa-spinner fa-spin fa-3x" style="color: var(--primary-color);"></i>
+                        <p style="margin-top: 15px;">Obteniendo datos del clima...</p>
+                    </div>
+                    <div id="clima-data" style="display: none;">
+                        <h3 style="font-size: 2rem; margin-bottom: 20px; color: var(--primary-color);">
+                            <i id="clima-icon" class="fa-solid fa-cloud-sun"></i> Loja, Ecuador
+                        </h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">Temperatura Actual</p>
+                                <p id="clima-temp" style="font-size: 2.5rem; font-weight: 800; color: #1e293b;">--°C</p>
+                            </div>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">Humedad</p>
+                                <p id="clima-humedad" style="font-size: 2.5rem; font-weight: 800; color: #1e293b;">--%</p>
+                            </div>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">Descripción</p>
+                                <p id="clima-desc" style="font-size: 1.5rem; font-weight: 600; color: #1e293b; text-transform: capitalize;">--</p>
+                            </div>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b;">Viento</p>
+                                <p id="clima-viento" style="font-size: 1.5rem; font-weight: 600; color: #1e293b;">-- m/s</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="clima-error" style="display: none; color: #ef4444;">
+                        <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                        <p style="margin-top: 10px;">Error al obtener los datos del clima. Verifica tu conexión a internet o la API Key.</p>
+                    </div>
+                </div>
+            `
         }
     };
 
@@ -244,6 +284,8 @@ $(document).ready(function() {
                 setupCatalogFilters();
             } else if (sectionKey === 'contacto') {
                 setupContactFormSubmit();
+            } else if (sectionKey === 'clima') {
+                setupWeatherAPI();
             }
 
             // Mostrar nuevamente con FadeIn
@@ -273,19 +315,86 @@ $(document).ready(function() {
         $('#btn-submit-contacto').on('click', function(e) {
             const form = $('#contact-form-element')[0];
             
-            // Forzar validación nativa del navegador
             if (form.checkValidity()) {
                 e.preventDefault();
                 
-                // Efecto de desvanecimiento del formulario y aparición del mensaje de éxito
-                $('#contact-form-element').slideUp(400, function() {
-                    $('#success-message').fadeIn(400);
+                // Mostrar estado de carga
+                const btn = $(this);
+                const originalText = btn.html();
+                btn.html('<i class="fa-solid fa-spinner fa-spin"></i> Enviando...');
+                btn.prop('disabled', true);
+
+                // Recolectar datos
+                const formData = {
+                    nombre: $('#c_nombre').val(),
+                    email: $('#c_email').val(),
+                    mensaje: $('#c_mensaje').val()
+                };
+
+                // Enviar al backend Python (Flask)
+                fetch('http://127.0.0.1:5000/api/contacto', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        $('#contact-form-element').slideUp(400, function() {
+                            $('#success-message').html('<i class="fa-solid fa-circle-check"></i> ' + data.message).fadeIn(400);
+                        });
+                    } else {
+                        alert("Error: " + data.message);
+                        btn.html(originalText);
+                        btn.prop('disabled', false);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("No se pudo conectar con el servidor. ¿Está el backend Flask corriendo?");
+                    btn.html(originalText);
+                    btn.prop('disabled', false);
                 });
+                
             } else {
-                // Si falta algún campo requerido, dispara el aviso del navegador
                 form.reportValidity();
             }
         });
+    }
+
+    // Funcionalidad de la API del Clima
+    function setupWeatherAPI() {
+        const apiKey = 'eada7b6266bdf41847a33bd22948d455';
+        const city = 'Loja,EC'; // Ciudad requerida
+        const url = \`https://api.openweathermap.org/data/2.5/weather?q=\${city}&appid=\${apiKey}&units=metric&lang=es\`;
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la API');
+                return response.json();
+            })
+            .then(data => {
+                // Ocultar carga y mostrar datos
+                $('#clima-loading').hide();
+                $('#clima-data').fadeIn();
+
+                // Rellenar datos
+                $('#clima-temp').text(Math.round(data.main.temp) + '°C');
+                $('#clima-humedad').text(data.main.humidity + '%');
+                $('#clima-desc').text(data.weather[0].description);
+                $('#clima-viento').text(data.wind.speed + ' m/s');
+                
+                // Icono dinámico según clima
+                const iconCode = data.weather[0].icon;
+                const iconUrl = \`http://openweathermap.org/img/wn/\${iconCode}@2x.png\`;
+                // En vez de usar fa-solid, podemos insertar la imagen del icono de OpenWeather
+                $('#clima-icon').replaceWith(\`<img src="\${iconUrl}" alt="icono clima" style="vertical-align: middle; height: 60px;">\`);
+            })
+            .catch(error => {
+                console.error(error);
+                $('#clima-loading').hide();
+                $('#clima-error').fadeIn();
+            });
     }
 
     // Verificar si hay parámetros en la URL para automatizar capturas sin transiciones

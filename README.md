@@ -22,17 +22,21 @@ Este repositorio contiene los archivos de código fuente correspondientes al des
 ## 🛠️ Tecnologías Utilizadas
 1.  **HTML5:** Estructura web estructurada y semántica.
 2.  **CSS3:** Estilos visuales adaptativos (Flexbox y Grid) con diseño moderno y responsivo.
-3.  **JavaScript & jQuery:** Dinamismo, carga de contenidos sin recarga de página (Single Page Application simulada), filtros en catálogo y validación de formularios en el cliente.
+3.  **JavaScript & jQuery:** Dinamismo, carga de contenidos sin recarga de página y consumo de APIs externas mediante `fetch`.
 4.  **MariaDB / MySQL:** Motor de base de datos relacional para la persistencia transaccional.
+5.  **Python (Flask):** Micro-framework utilizado para el backend, procesando peticiones HTTP y ejecutando consultas en BD mediante `pymysql`.
+6.  **APIs y Librerías:** `smtplib` para envío de correos, `ftplib` para subida de archivos al servidor, y consumo de OpenWeatherMap API para el reporte meteorológico.
 
 ---
 
 ## 📂 Estructura del Repositorio
-*   `index.html`: Estructura base del portal web (Cabecera, Navegación, Cuerpo dinámico y Pie de página).
-*   `style.css`: Hojas de estilo para la presentación responsiva del portal.
-*   `app.js`: Lógica jQuery que controla las transiciones y dinamismo de la página.
-*   `script.sql`: Script de base de datos relacional (DDL para creación de tablas y DML para operaciones CRUD de prueba).
-*   `assets/`: Carpeta de recursos gráficos (logotipo e imágenes).
+*   `index.html`: Estructura base del portal web.
+*   `style.css`: Hojas de estilo para la presentación responsiva.
+*   `app.js`: Lógica jQuery que controla transiciones y consumo de OpenWeatherMap.
+*   `app_backend.py`: Servidor backend en Python/Flask que maneja el registro en BD y envío de correos.
+*   `subir_ftp.py`: Script Python para comprimir y desplegar el proyecto mediante FTP.
+*   `script.sql` / `script_aa2.sql`: Scripts DDL para creación de tablas, incluyendo la tabla `contacto`.
+*   `assets/`: Carpeta de recursos gráficos.
 
 ---
 
@@ -48,9 +52,16 @@ Para ejecutar la página web interactiva:
 Para montar y probar la base de datos relacional en MariaDB utilizando XAMPP:
 1.  Inicia el módulo **MySQL** desde el Panel de Control de XAMPP.
 2.  Entra en tu navegador a `http://localhost/phpmyadmin/`.
-3.  Crea una nueva base de datos llamada `materials_fadrell` o simplemente ve a la pestaña **SQL**.
-4.  Copia y pega el contenido del archivo `script.sql` en la caja de consultas SQL de phpMyAdmin.
-5.  Ejecuta la consulta. Se crearán automáticamente las tablas, restricciones de integridad, se insertarán los datos iniciales y se ejecutarán las consultas CRUD demostrativas.
+3.  Ejecuta primero `script.sql` y luego `script_aa2.sql` para actualizar el esquema e incluir la tabla de `contacto`.
+
+### 3. Backend (Python/Flask)
+Para que el formulario de contacto funcione y envíe el acuse de recibo:
+1. Asegúrate de tener Python instalado y las dependencias requeridas (`pip install flask pymysql`).
+2. En la terminal, ejecuta el servidor backend: `python app_backend.py`.
+3. El servidor correrá en `http://127.0.0.1:5000`. Ya puedes enviar el formulario desde la web.
+
+### 4. Automatización FTP
+Para subir el proyecto a un servidor mediante el módulo nativo `ftplib`, ejecuta en consola `python subir_ftp.py`. El script comprimirá el código fuente y lo enviará al destino configurado.
 
 ---
 
