@@ -366,7 +366,7 @@ $(document).ready(function() {
     function setupWeatherAPI() {
         const apiKey = 'eada7b6266bdf41847a33bd22948d455';
         const city = 'Loja,EC'; // Ciudad requerida
-        const url = \`https://api.openweathermap.org/data/2.5/weather?q=\${city}&appid=\${apiKey}&units=metric&lang=es\`;
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=es`;
 
         fetch(url)
             .then(response => {
@@ -386,9 +386,9 @@ $(document).ready(function() {
                 
                 // Icono dinámico según clima
                 const iconCode = data.weather[0].icon;
-                const iconUrl = \`http://openweathermap.org/img/wn/\${iconCode}@2x.png\`;
+                const iconUrl = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
                 // En vez de usar fa-solid, podemos insertar la imagen del icono de OpenWeather
-                $('#clima-icon').replaceWith(\`<img src="\${iconUrl}" alt="icono clima" style="vertical-align: middle; height: 60px;">\`);
+                $('#clima-icon').replaceWith(`<img src="${iconUrl}" alt="icono clima" style="vertical-align: middle; height: 60px;">`);
             })
             .catch(error => {
                 console.error(error);

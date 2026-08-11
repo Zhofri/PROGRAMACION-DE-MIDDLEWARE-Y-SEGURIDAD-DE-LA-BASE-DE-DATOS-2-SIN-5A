@@ -4,10 +4,10 @@ import zipfile
 from datetime import datetime
 
 # Configuración del servidor FTP de prueba
-FTP_SERVER = "ftp.dlptest.com"
-FTP_USER = "dlpuser"
-FTP_PASS = "rNrKYTX9g7z3RgJRmxWuGHbeu"
-FTP_DIR = "/"
+FTP_SERVER = "demo.wftpserver.com"
+FTP_USER = "demo"
+FTP_PASS = "demo"
+FTP_DIR = "/upload"
 
 # Archivos a comprimir (códigos fuentes solicitados)
 ARCHIVOS_PYTHON = ['app_backend.py', 'subir_ftp.py', 'script_aa2.sql']
