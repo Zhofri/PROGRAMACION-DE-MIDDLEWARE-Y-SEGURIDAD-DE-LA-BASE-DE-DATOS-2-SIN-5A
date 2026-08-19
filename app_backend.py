@@ -79,15 +79,79 @@ def enviar_correo_confirmacion(destinatario, nombre):
         # En un proyecto real se registraría el error, para esta tarea dejamos pasar para no bloquear
         pass
 
+@app.route('/api/productos', methods=['GET'])
+def obtener_productos():
+    try:
+        conexion = pymysql.connect(**DB_CONFIG)
+        try:
+            with conexion.cursor() as cursor:
+                # Obtener todos los productos junto con su categoria
+                sql = """
+                    SELECT p.id, p.nombre, p.descripcion, p.precio, p.stock, 
+                           c.nombre as categoria, p.imagen_url 
+                    FROM productos p 
+                    LEFT JOIN categorias c ON p.categoria_id = c.id
+                """
+                cursor.execute(sql)
+                productos = cursor.fetchall()
+            return jsonify(productos), 200
+        finally:
+            conexion.close()
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": "Ocurrió un error al obtener productos."}), 500
+
+@app.route('/api/ofertas', methods=['GET'])
+def obtener_ofertas():
+    try:
+        conexion = pymysql.connect(**DB_CONFIG)
+        try:
+            with conexion.cursor() as cursor:
+                # Obtener productos con ofertas activas
+                sql = """
+                    SELECT p.id, p.nombre, p.descripcion, p.precio, o.descuento_porcentaje, 
+                           (p.precio - (p.precio * o.descuento_porcentaje / 100)) as precio_oferta, 
+                           o.fecha_fin, p.imagen_url, o.descripcion as oferta_descripcion
+                    FROM ofertas o
+                    JOIN productos p ON o.producto_id = p.id
+                    WHERE CURRENT_DATE BETWEEN o.fecha_inicio AND o.fecha_fin
+                """
+                cursor.execute(sql)
+                ofertas = cursor.fetchall()
+            return jsonify(ofertas), 200
+        finally:
+            conexion.close()
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": "Ocurrió un error al obtener ofertas."}), 500
+
+@app.route('/api/noticias', methods=['GET'])
+def obtener_noticias():
+    try:
+        conexion = pymysql.connect(**DB_CONFIG)
+        try:
+            with conexion.cursor() as cursor:
+                # Consultar todas las noticias ordenadas de la mas reciente a la mas antigua
+                sql = "SELECT id, fecha, titulo, contenido, imagen_url FROM noticias ORDER BY fecha DESC"
+                cursor.execute(sql)
+                noticias = cursor.fetchall()
+            return jsonify(noticias), 200
+        finally:
+            conexion.close()
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": "Ocurrió un error al obtener noticias."}), 500
+
+
+# Habilitar CORS manualmente para desarrollo si el frontend corre en otro puerto, 
+# pero como asumimos que el front llamara a localhost:5000 lo manejamos asi.
+# En produccion se instalaria flask-cors.
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST')
+    return response
+
 if __name__ == '__main__':
-    # Habilitar CORS manualmente para desarrollo si el frontend corre en otro puerto, 
-    # pero como asuminos que el front llamará a localhost:5000 lo manejamos así.
-    # En producción se instalaría flask-cors.
-    @app.after_request
-    def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'POST')
-        return response
-        
     app.run(debug=True, port=5000)
